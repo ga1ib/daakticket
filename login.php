@@ -24,6 +24,18 @@
                         <button type="submit" name="sign_in_submit" class="btn btn-cs mt-2">Sign In</button>
                     </form>
                 </div>
+                <!-- logout here -->
+                <?php
+                // Check if the user is logged in
+                if (isset($_SESSION['user_id'])): ?>
+                    <!-- Logout Button -->
+                    <form action="logout.php" method="POST">
+                        <button type="submit" name="logout" class="btn btn-danger mt-2">Logout</button>
+                    </form>
+                <?php else: ?>
+                    <!-- Login or Register Forms Go Here (Already included in your original code) -->
+                <?php endif; ?>
+
                 <div class="cta mt-5">
                     <img src="assets/uploads/logo.png" class="img-fluid" alt="logo">
                     <h2>Join DaakTicket today and become part of a vibrant community of storytellers, thinkers, and
@@ -32,7 +44,7 @@
 
                 <!-- login php code here -->
                 <?php
-                // session_start();
+
                 $message = "";
                 $messageType = "";
 
@@ -44,40 +56,41 @@
                     $query_in = "SELECT user_id, username, email, password_hash FROM User WHERE email = '$email'";
                     $result = mysqli_query($conn, $query_in);
 
-                    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-                    $count = mysqli_num_rows($result);
+                    if (mysqli_num_rows($result) === 1) {
+                        $user = mysqli_fetch_assoc($result);
 
-                    if ($count == 1) {
-                        $message = "Logged In successfully";
-                        $messageType = "success";
+                        // Verify the hashed password
+                        if (password_verify($password, $user['password_hash'])) {
+                            // Set session variables for the logged-in user
+                            $_SESSION['user_id'] = $user['user_id'];
+                            $_SESSION['username'] = $user['username'];
+                            $_SESSION['email'] = $user['email'];
+
+                            // Set a successful login message
+                            $message = "Welcome, " . $_SESSION['username'] . "!";
+                            $messageType = "success";
+                        } else {
+                            // Incorrect password
+                            $message = "Incorrect password. Please try again.";
+                        }
                     } else {
-                        $message = "Logged In failed";
+                        // No user found with the provided email
+                        $message = "No account found with that email.";
                         $messageType = "error";
                     }
 
-                    // if (mysqli_num_rows($result) === 1) {
-                    //     $user = mysqli_fetch_assoc($result);
-                
-                    //     // Verify the hashed password
-                    //     if (password_verify($password, $user['password_hash'])) {
-                    //         // Set session variables for the logged-in user
-                    //         $_SESSION['user_id'] = $user['user_id'];
-                    //         $_SESSION['username'] = $user['username'];
-                    //         $_SESSION['email'] = $user['email'];
-                
-                    //         // Display a welcome message if logged in
-                    //         $message = "Welcome, " . $_SESSION['username'] . "!";
-                    //     } else {
-                    //         $message = "Incorrect password. Please try again.";
-                    //     }
-                    // } else {
-                    //     $message = "No account found with that email.";
-                    // }
-                
                     $conn->close();
-
                 }
                 ?>
+
+
+
+                <!-- Display message if available -->
+                <?php if (!empty($message)): ?>
+                    <div id="toastMessage" data-message="<?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>"
+                        data-type="<?php echo $messageType == 'success' ? 'success' : 'danger'; ?>" style="display: none;">
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- registration form -->
@@ -161,7 +174,6 @@
                         }
                     }
                     $conn->close();
-
                 }
                 ob_end_flush();
                 ?>
