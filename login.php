@@ -19,7 +19,7 @@
                             <i class="fa-regular fa-eye-slash toggle-password" data-toggle="#signInPassword"></i>
                         </div>
                         <div class="form-group">
-                            <a href="#">Forgot Password?</a>
+                            <a href="forgot_password.php">Forgot Password?</a>
                         </div>
                         <button type="submit" name="sign_in_submit" class="btn btn-cs mt-2">Sign In</button>
                     </form>
@@ -72,6 +72,10 @@
                         } else {
                             // Incorrect password
                             $message = "Incorrect password. Please try again.";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 23bb3607cb9f751ad136c8bcd5b40ac1c5a10609
                         }
                     } else {
                         // No user found with the provided email
@@ -83,8 +87,11 @@
                 }
                 ?>
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 23bb3607cb9f751ad136c8bcd5b40ac1c5a10609
                 <!-- Display message if available -->
                 <?php if (!empty($message)): ?>
                     <div id="toastMessage" data-message="<?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>"
